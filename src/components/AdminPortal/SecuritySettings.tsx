@@ -21,7 +21,7 @@ export default function SecuritySettings({ onUpdateSecuritySettings }: SecurityS
           <label className="block mb-1.5">Superintendent Login</label>
           <input 
             type="text" 
-            defaultValue="Admin Sarah"
+            defaultValue="myhles-admin"
             className="w-full text-slate-850 border rounded text-xs p-2.5 outline-none bg-slate-50 focus:bg-white" 
             required
           />

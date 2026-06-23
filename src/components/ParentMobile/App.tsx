@@ -13,6 +13,14 @@ import {
 import { Student, Notice } from './types';
 import { AccessRequest } from '../../types';
 import { INITIAL_NOTICES, INITIAL_STUDENTS } from './mockData';
+import { isSupabaseConfigured } from '../../supabaseClient';
+import {
+  fetchParentChildren,
+  fetchPendingParentRequests,
+  recordLoginEvent,
+  signInParentWithGoogle,
+  upsertParentProfileFromSession
+} from '../../services/portalData';
 import ParentLogin from './ParentLogin';
 import ParentOnboarding from './ParentOnboarding';
 import ParentDashboard from './ParentDashboard';
@@ -57,6 +65,36 @@ export default function App({ onAddAccessRequest }: ParentMobileAppProps) {
   // Parent Tab Selector: 'home' | 'fees' | 'results' | 'profile'
   const [parentTab, setParentTab] = useState<'home' | 'fees' | 'results' | 'profile'>('home');
 
+  useEffect(() => {
+    if (!isSupabaseConfigured) return;
+
+    const loadParentSession = async () => {
+      try {
+        const profile = await upsertParentProfileFromSession();
+        if (!profile?.email) return;
+
+        const [approvedChildren, pendingChildren] = await Promise.all([
+          fetchParentChildren(profile.email),
+          fetchPendingParentRequests(profile.email)
+        ]);
+
+        const linkedChildren = [...approvedChildren, ...pendingChildren];
+        setGuardianInfo({ name: profile.name, phoneOrEmail: profile.email });
+        recordLoginEvent('Parent', profile.email, 'google').catch(error => {
+          console.error('Failed to record parent login event', error);
+        });
+        setStudents(linkedChildren);
+        setIsLoggedIn(true);
+        setIsOnboardingCompleted(linkedChildren.length > 0);
+        setSelectedStudentId(linkedChildren[0]?.id || '');
+      } catch (error) {
+        console.error('Failed to load parent Supabase session', error);
+      }
+    };
+
+    loadParentSession();
+  }, []);
+
   // Synchronise state changes with client cache for seamless reloads
   useEffect(() => {
     localStorage.setItem('school_students_pool', JSON.stringify(students));
@@ -99,6 +137,20 @@ export default function App({ onAddAccessRequest }: ParentMobileAppProps) {
       }
     } else {
       setIsOnboardingCompleted(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    if (!isSupabaseConfigured) {
+      handleParentLoginSuccess(window.prompt('Enter the Google email used for this parent account') || '', 'google');
+      return;
+    }
+
+    try {
+      await signInParentWithGoogle();
+    } catch (error) {
+      console.error(error);
+      alert('Google login could not start. Please check Supabase auth settings.');
     }
   };
 
@@ -260,6 +312,7 @@ export default function App({ onAddAccessRequest }: ParentMobileAppProps) {
             /* PARENT ROLE: 1. LOGIN SCREEN */
             <ParentLogin 
               onLoginSuccess={handleParentLoginSuccess}
+              onGoogleLogin={handleGoogleLogin}
               onSwitchToTeacher={() => {}}
             />
           ) : !isOnboardingCompleted ? (
@@ -353,11 +406,6 @@ export default function App({ onAddAccessRequest }: ParentMobileAppProps) {
 
         </div>
 
-      </div>
-
-      {/* FOOTER LABEL */}
-      <div className="text-center mt-3 text-slate-500 text-[11px] font-sans">
-        Powered by Antigravity OS and Google DeepMind Build engine. Styled via Tailwind CSS v4.
       </div>
     </div>
   );

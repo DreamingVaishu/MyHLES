@@ -19,7 +19,7 @@ export default function SecuritySettings({ onUpdateSettings }: SecuritySettingsP
           <label className="block mb-1.5">Registered Bursar Name</label>
           <input 
             type="text" 
-            defaultValue="A. Shankaran"
+            defaultValue="Accounts Staff"
             className="w-full text-slate-800 border rounded text-xs p-2.5 outline-none focus:outline-slate-900 bg-slate-50 focus:bg-white" 
             required
           />

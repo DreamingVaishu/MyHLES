@@ -18,7 +18,7 @@ export default function Settings({ onSave }: SettingsProps) {
             <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Full Name</label>
             <input 
               type="text" 
-              defaultValue="Dr. Sarah Jenkins"
+              defaultValue="Teacher"
               className="w-full text-slate-800 bg-slate-50 border border-slate-200 rounded text-sm p-2.5 outline-none focus:bg-white focus:outline-[#0B1220]" 
               required 
             />
@@ -38,7 +38,7 @@ export default function Settings({ onSave }: SettingsProps) {
           <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Institutional Email</label>
           <input 
             type="email" 
-            defaultValue="sarah.jenkins@myhles.edu.in"
+            defaultValue=""
             className="w-full text-slate-400 bg-slate-100 border border-slate-150 rounded text-sm p-2.5 outline-none cursor-not-allowed" 
             disabled 
           />

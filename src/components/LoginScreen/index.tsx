@@ -9,7 +9,7 @@ interface LoginScreenProps {
   autoSelectRole?: Role;
 }
 
-const ADMIN_USER_ID = 'myhles-admin';
+const ADMIN_USER_ID = 'myhles@admin';
 const ADMIN_PASSWORD = 'Admin@12345';
 
 export default function LoginScreen({ onLogin, onAddAccessRequest, accessRequests = [], autoSelectRole = 'Teacher' }: LoginScreenProps) {
@@ -44,7 +44,8 @@ export default function LoginScreen({ onLogin, onAddAccessRequest, accessRequest
 
     const approvedRequest = accessRequests.find(req => {
       const sameEmail = req.email.toLowerCase() === email.toLowerCase();
-      return sameEmail && req.role === role && req.status === 'Approved';
+      const samePassword = req.requestedPassword ? req.requestedPassword === password : true;
+      return sameEmail && samePassword && req.role === role && req.status === 'Approved';
     });
 
     if (!approvedRequest) {
@@ -454,4 +455,3 @@ export default function LoginScreen({ onLogin, onAddAccessRequest, accessRequest
     </div>
   );
 }
-

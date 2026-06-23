@@ -3,10 +3,11 @@ import { School, ArrowRight, Shield, BellRing, Trophy, Smartphone } from 'lucide
 
 interface ParentLoginProps {
   onLoginSuccess: (phoneOrEmail: string, method: 'google' | 'phone') => void;
+  onGoogleLogin?: () => void;
   onSwitchToTeacher?: () => void;
 }
 
-export default function ParentLogin({ onLoginSuccess, onSwitchToTeacher }: ParentLoginProps) {
+export default function ParentLogin({ onLoginSuccess, onGoogleLogin }: ParentLoginProps) {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [countryCode, setCountryCode] = useState('+91');
   const [error, setError] = useState('');
@@ -31,6 +32,11 @@ export default function ParentLogin({ onLoginSuccess, onSwitchToTeacher }: Paren
   };
 
   const handleGoogleSubmit = () => {
+    if (onGoogleLogin) {
+      onGoogleLogin();
+      return;
+    }
+
     const email = window.prompt('Enter the Google email used for this parent account');
     if (!email) return;
     setIsSubmitting(true);
@@ -115,9 +121,6 @@ export default function ParentLogin({ onLoginSuccess, onSwitchToTeacher }: Paren
                       className="w-full h-14 bg-[#eff4ff] border border-[#c5c6cd] rounded-xl px-3 font-semibold text-[#0b1c30] focus:outline-none focus:ring-2 focus:ring-[#091426]/20 text-sm md:text-base cursor-pointer"
                     >
                       <option value="+91">+91 (IN)</option>
-                      <option value="+1">+1 (US)</option>
-                      <option value="+44">+44 (UK)</option>
-                      <option value="+971">+971</option>
                     </select>
                   </div>
                   <input

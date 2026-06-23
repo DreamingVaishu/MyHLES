@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { Role, Student, AccessRequest, Notice, Transaction, FeeStructureItem, ActivityLog, SchoolConfig } from './types';
 import { 
@@ -17,6 +17,18 @@ import TeacherPortal from './components/TeacherPortal';
 import AccountsPortal from './components/AccountsPortal';
 import AdminPortal from './components/AdminPortal';
 import ParentMobileApp from './components/ParentMobile/App';
+import { isSupabaseConfigured } from './supabaseClient';
+import {
+  approveAccessRequest,
+  createAccessRequest,
+  fetchAccessRequests,
+  fetchStudents,
+  recordLoginEvent,
+  recordCashPayment,
+  rejectAccessRequest,
+  saveStudentMark,
+  updateStudentRecord
+} from './services/portalData';
 
 function AppContent() {
   const navigate = useNavigate();
@@ -46,6 +58,25 @@ function AppContent() {
   const [transactions, setTransactions] = useState<Transaction[]>(INITIAL_TRANSACTIONS);
   const [feeStructures, setFeeStructures] = useState<FeeStructureItem[]>(INITIAL_FEES);
   const [activityLogs, setActivityLogs] = useState<ActivityLog[]>(INITIAL_LOGS);
+
+  useEffect(() => {
+    if (!isSupabaseConfigured) return;
+
+    const loadPortalData = async () => {
+      try {
+        const [liveStudents, liveRequests] = await Promise.all([
+          fetchStudents(),
+          fetchAccessRequests()
+        ]);
+        setStudents(liveStudents);
+        setRequests(liveRequests);
+      } catch (error) {
+        console.error('Failed to load Supabase portal data', error);
+      }
+    };
+
+    loadPortalData();
+  }, []);
 
   // Helper helper to append terminal audit log histories
   const handleAddNewActivityLog = (action: string, target: string) => {
@@ -81,6 +112,11 @@ function AppContent() {
     setRole(selectedRole);
     setEmail(userEmail);
     setActiveTab('Dashboard');
+    if (isSupabaseConfigured) {
+      recordLoginEvent(selectedRole, userEmail).catch(error => {
+        console.error('Failed to record login event', error);
+      });
+    }
     
     // Navigate to the portal's main page (already on the correct route)
     // Push positive audit trace
@@ -106,12 +142,41 @@ function AppContent() {
     navigate('/');
   };
 
-  const handleUpdateStudent = (updatedStudent: Student) => {
+  const handleUpdateStudent = async (updatedStudent: Student) => {
     setStudents(prev => prev.map(s => s.id === updatedStudent.id ? updatedStudent : s));
+    if (!isSupabaseConfigured) return;
+
+    try {
+      await updateStudentRecord(updatedStudent);
+      await Promise.all(updatedStudent.grades.map(grade =>
+        saveStudentMark(updatedStudent.id, grade.subject, grade.marksSecured)
+      ));
+    } catch (error) {
+      console.error('Failed to update student in Supabase', error);
+      alert('Student changes were kept locally but could not be saved to Supabase.');
+    }
   };
 
-  const handleApproveRequest = (id: string) => {
+  const handleApproveRequest = async (id: string) => {
     const original = requests.find(r => r.id === id);
+    if (!original) return;
+
+    if (isSupabaseConfigured) {
+      try {
+        await approveAccessRequest(original, role || 'Admin');
+        const [liveStudents, liveRequests] = await Promise.all([
+          fetchStudents(),
+          fetchAccessRequests()
+        ]);
+        setStudents(liveStudents);
+        setRequests(liveRequests);
+        handleAddNewActivityLog("Approved Access Request", `${original.role}: ${original.name}`);
+      } catch (error) {
+        console.error('Failed to approve request in Supabase', error);
+        alert('Approval could not be saved to Supabase.');
+      }
+      return;
+    }
 
     setRequests(prev => prev.map(r => r.id === id ? { ...r, status: 'Approved' } : r));
     
@@ -150,8 +215,34 @@ function AppContent() {
     }
   };
 
-  const handleRejectRequest = (id: string, category: string, comment: string) => {
+  const handleRejectRequest = async (id: string, category: string, comment: string) => {
+    if (isSupabaseConfigured) {
+      try {
+        await rejectAccessRequest(id, category, comment, role || 'Admin');
+        setRequests(await fetchAccessRequests());
+      } catch (error) {
+        console.error('Failed to reject request in Supabase', error);
+        alert('Rejection could not be saved to Supabase.');
+      }
+      return;
+    }
+
     setRequests(prev => prev.map(r => r.id === id ? { ...r, status: 'Rejected', rejectionCategory: category, rejectionReason: comment } : r));
+  };
+
+  const handleAddAccessRequest = async (req: AccessRequest) => {
+    setRequests(prev => [req, ...prev]);
+    handleAddNewActivityLog("Created Signup Application", req.name);
+
+    if (!isSupabaseConfigured) return;
+
+    try {
+      await createAccessRequest(req);
+      setRequests(await fetchAccessRequests());
+    } catch (error) {
+      console.error('Failed to save request to Supabase', error);
+      alert('Request was kept locally but could not be saved to Supabase.');
+    }
   };
 
   const handleClassChange = (grade: string, div: string) => {
@@ -164,8 +255,16 @@ function AppContent() {
     handleAddNewActivityLog("Published Notice Bulletin", notice.title);
   };
 
-  const handleAddTransaction = (txn: Transaction) => {
+  const handleAddTransaction = async (txn: Transaction) => {
     setTransactions(prev => [txn, ...prev]);
+    if (!isSupabaseConfigured) return;
+
+    try {
+      await recordCashPayment(txn);
+    } catch (error) {
+      console.error('Failed to save transaction to Supabase', error);
+      alert('Transaction was kept locally but could not be saved to Supabase.');
+    }
   };
 
   const handleUpdateFeeStructure = (fees: FeeStructureItem[]) => {
@@ -190,10 +289,7 @@ function AppContent() {
     <Routes>
       <Route path="/parent" element={
         <ParentMobileApp
-          onAddAccessRequest={(req) => {
-            setRequests(prev => [req, ...prev]);
-            handleAddNewActivityLog("Created Student Approval Request", `${req.linkedStudentName} for Grade ${req.gradeRequested}-${req.divisionRequested}`);
-          }}
+          onAddAccessRequest={handleAddAccessRequest}
         />
       } />
       
@@ -201,10 +297,7 @@ function AppContent() {
         role === null ? (
           <LoginScreen 
             onLogin={handleLogin}
-            onAddAccessRequest={(req) => {
-              setRequests(prev => [req, ...prev]);
-              handleAddNewActivityLog("Created Signup Application", req.name);
-            }}
+            onAddAccessRequest={handleAddAccessRequest}
             accessRequests={requests}
             autoSelectRole="Teacher"
           />
@@ -215,10 +308,7 @@ function AppContent() {
         role === null ? (
           <LoginScreen 
             onLogin={handleLogin}
-            onAddAccessRequest={(req) => {
-              setRequests(prev => [req, ...prev]);
-              handleAddNewActivityLog("Created Signup Application", req.name);
-            }}
+            onAddAccessRequest={handleAddAccessRequest}
             accessRequests={requests}
             autoSelectRole="Accounts"
           />
@@ -229,10 +319,7 @@ function AppContent() {
         role === null ? (
           <LoginScreen 
             onLogin={handleLogin}
-            onAddAccessRequest={(req) => {
-              setRequests(prev => [req, ...prev]);
-              handleAddNewActivityLog("Created Signup Application", req.name);
-            }}
+            onAddAccessRequest={handleAddAccessRequest}
             accessRequests={requests}
             autoSelectRole="Admin"
           />

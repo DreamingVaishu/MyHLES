@@ -66,11 +66,9 @@ export default function Navbar({ currentGrade, currentDiv, onSendGlobalNotice }:
           <div className="w-px h-6 bg-slate-250 hidden md:block"></div>
 
           <div className="items-center gap-2 hidden md:flex">
-            <img 
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNAPNV_pMAODizzYne8b-K01Rlk2V8ksmnedlrfhHEgZkLek9jzZO8o3th6x4fqfQZgk65hOffxIes1mlIHA-fIPAGoH3Y9gaH5z9_6d54wcJ4Ut1xnmwdazw9RXVCMYYEme69C4Dy6FOyhnzvUrOtSXYBIhr81cedMUF9U3roDVMkr7GJLhdlgFYZOphTXssurYXfRQ-f-uT17-F8P2lGlocxpZwpoJDHIu8Rc_hV_0dPJFBh3a755DwgUg_fiUxGEzyDvbN_xxTo" 
-              alt="Dr. Sarah Jenkins"
-              className="w-8 h-8 rounded-full border border-slate-200 object-cover" 
-            />
+            <div className="w-8 h-8 rounded-full border border-slate-200 bg-slate-900 text-emerald-300 flex items-center justify-center text-[10px] font-bold">
+              TE
+            </div>
           </div>
         </div>
       </header>

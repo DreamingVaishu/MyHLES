@@ -43,11 +43,9 @@ export default function Navbar({ onSendGlobalNotice }: NavbarProps) {
         <div className="w-px h-6 bg-slate-250 hidden md:block"></div>
 
         <div className="items-center gap-2 hidden md:flex">
-          <img 
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDo7g4pTyntEQKFiKAGCM_A7IyKSUZJ41yWozLpqOt0loQSxyRg2AOFlFZQ-Su6_m4nyiLmhGuUTTea5GDxZ8PjqYiD67GaE0Uw6VO_IBy6NI5uPgLdnVZjd1k5zfJvUPL1lU-qoepnmI-qNJs_pZ36sRWCI-SQQYsc8PPL44amWp985B4L_I6vTnVcYzCmTLTCjAq9_axY2vGrNiY-h6MqlbFNDY40LFUKRDkT7dZyI5p3K7ebdOFYH7gGpUBxH-24pqUezLAjKapa" 
-            alt="A. Shankaran"
-            className="w-8 h-8 rounded-full border border-slate-200 object-cover" 
-          />
+          <div className="w-8 h-8 rounded-full border border-slate-200 bg-slate-900 text-emerald-300 flex items-center justify-center text-[10px] font-bold">
+            AC
+          </div>
         </div>
       </div>
     </header>

@@ -37,7 +37,7 @@ export default function Reports({ transactions, onExportReport }: ReportsProps) 
           </div>
           <div>
             <span className="text-slate-400 block font-bold">Compliance Officer:</span>
-            <span className="text-slate-900 mt-1 block">A. Shankaran</span>
+            <span className="text-slate-900 mt-1 block">Accounts Staff</span>
           </div>
           <div>
             <span className="text-slate-400 block font-bold">Ledger Status Check:</span>
