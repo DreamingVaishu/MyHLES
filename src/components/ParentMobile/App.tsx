@@ -10,14 +10,19 @@ import {
   Sliders
 } from 'lucide-react';
 
-import { Student, Notice, SubjectGrade } from './types';
-import { INITIAL_NOTICES, INITIAL_STUDENTS, calculateGrade, MOCK_SUBJECTS_POOL } from './mockData';
+import { Student, Notice } from './types';
+import { AccessRequest } from '../../types';
+import { INITIAL_NOTICES, INITIAL_STUDENTS } from './mockData';
 import ParentLogin from './ParentLogin';
 import ParentOnboarding from './ParentOnboarding';
 import ParentDashboard from './ParentDashboard';
 import ParentFees from './ParentFees';
 
-export default function App() {
+interface ParentMobileAppProps {
+  onAddAccessRequest?: (request: AccessRequest) => void;
+}
+
+export default function App({ onAddAccessRequest }: ParentMobileAppProps) {
   // Unified State for students and notice updates to sync real-time
   const [students, setStudents] = useState<Student[]>(() => {
     const saved = localStorage.getItem('school_students_pool');
@@ -36,7 +41,7 @@ export default function App() {
   
   const [guardianInfo, setGuardianInfo] = useState(() => {
     const info = localStorage.getItem('school_parent_guardian');
-    return info ? JSON.parse(info) : { name: 'Michael Thompson', phoneOrEmail: '+91 9999999999' };
+    return info ? JSON.parse(info) : { name: 'Parent', phoneOrEmail: '' };
   });
 
   const [isOnboardingCompleted, setIsOnboardingCompleted] = useState(() => {
@@ -46,7 +51,7 @@ export default function App() {
   // Active student pointer in parent dashboard
   const [selectedStudentId, setSelectedStudentId] = useState<string>(() => {
     const saved = localStorage.getItem('school_parent_current_kid');
-    return saved || 's1';
+    return saved || '';
   });
 
   // Parent Tab Selector: 'home' | 'fees' | 'results' | 'profile'
@@ -79,7 +84,7 @@ export default function App() {
 
   // Handle successful Parent login screen
   const handleParentLoginSuccess = (phoneOrEmail: string, method: 'google' | 'phone') => {
-    const defaultName = method === 'google' ? 'Michael Thompson' : 'Michael Thompson';
+    const defaultName = method === 'google' ? 'Google Parent' : 'Parent';
     setGuardianInfo({ name: defaultName, phoneOrEmail });
     setIsLoggedIn(true);
 
@@ -98,20 +103,24 @@ export default function App() {
   };
 
   // Complete parent onboarding to forward children requests
-  const handleOnboardingComplete = (newChildren: { name: string; grade: string; section: string }[]) => {
+  const handleOnboardingComplete = (newChildren: { name: string; grade: string; section: string; gardenNumber: string }[]) => {
     const generated: Student[] = newChildren.map((child, idx) => {
       const childId = `s-temp-${Date.now()}-${idx}`;
       
-      // Pre-fill scholastic templates for activation
-      const templateGrades = MOCK_SUBJECTS_POOL.map(sub => {
-        const score = Math.floor(sub.baseMark + Math.random() * 10);
-        return {
-          subject: sub.subject,
-          grade: calculateGrade(score),
-          marks: score,
-          icon: sub.icon
-        };
+      onAddAccessRequest?.({
+        id: `REQ-${Date.now().toString().slice(-6)}-${idx}`,
+        name: guardianInfo.name,
+        email: guardianInfo.phoneOrEmail,
+        role: 'Parent',
+        linkedStudentName: child.name,
+        gradeRequested: child.grade.replace('Grade ', ''),
+        divisionRequested: child.section,
+        gardenNumber: child.gardenNumber,
+        requestDate: new Date().toISOString().split('T')[0],
+        status: 'Pending'
       });
+
+      const templateGrades: Student['academicGrades'] = [];
 
       return {
         id: childId,
@@ -120,25 +129,19 @@ export default function App() {
         section: child.section,
         guardianName: guardianInfo.name,
         guardianPhone: guardianInfo.phoneOrEmail,
+        gardenNumber: child.gardenNumber,
         studentId: '', // Blank - activated by teacher
         status: 'pending',
         academicGrades: templateGrades,
         attendance: {
-          present: 38,
-          total: 40,
-          percentage: 95.0
+          present: 0,
+          total: 0,
+          percentage: 0
         },
-        upcomingExams: [
-          { id: `e-temp1-${idx}`, date: '12', month: 'OCT', subject: 'Mathematics', details: 'Term 2 Finals • 09:00 AM' },
-          { id: `e-temp2-${idx}`, date: '15', month: 'OCT', subject: 'English Class Work', details: 'Weekly test' }
-        ],
-        outstandingBalance: 1250,
-        annualTotal: 3650,
-        feeItems: [
-          { id: `f-temp1-${idx}`, name: 'Tuition (Term 2)', amount: 3200, dueDate: '15 Sep 2026', status: 'Pending', category: 'tuition' },
-          { id: `f-temp2-${idx}`, name: 'Transport (Oct)', amount: 150, dueDate: '10 Oct 2026', status: 'Pending', category: 'transport' },
-          { id: `f-temp3-${idx}`, name: 'Lab Fees', amount: 300, dueDate: '15 Oct 2026', status: 'Pending', category: 'lab' }
-        ],
+        upcomingExams: [],
+        outstandingBalance: 0,
+        annualTotal: 0,
+        feeItems: [],
         transactions: []
       };
     });
@@ -161,7 +164,7 @@ export default function App() {
     setNotices(INITIAL_NOTICES);
     setIsLoggedIn(false);
     setIsOnboardingCompleted(false);
-    setSelectedStudentId('s1');
+    setSelectedStudentId('');
     setParentTab('home');
   };
 

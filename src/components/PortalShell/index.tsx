@@ -85,19 +85,19 @@ export default function PortalShell({
   // Render teacher specific bar or generic titles
   const userProfile = {
     Teacher: {
-      name: "Dr. Sarah Jenkins",
-      title: "Mathematics HOD",
-      avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuBNAPNV_pMAODizzYne8b-K01Rlk2V8ksmnedlrfhHEgZkLek9jzZO8o3th6x4fqfQZgk65hOffxIes1mlIHA-fIPAGoH3Y9gaH5z9_6d54wcJ4Ut1xnmwdazw9RXVCMYYEme69C4Dy6FOyhnzvUrOtSXYBIhr81cedMUF9U3roDVMkr7GJLhdlgFYZOphTXssurYXfRQ-f-uT17-F8P2lGlocxpZwpoJDHIu8Rc_hV_0dPJFBh3a755DwgUg_fiUxGEzyDvbN_xxTo"
+      name: "Teacher Portal",
+      title: "Approved Faculty Account",
+      avatar: ""
     },
     Accounts: {
-      name: "A. Shankaran",
-      title: "Chief Bursar Office",
-      avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuDo7g4pTyntEQKFiKAGCM_A7IyKSUZJ41yWozLpqOt0loQSxyRg2AOFlFZQ-Su6_m4nyiLmhGuUTTea5GDxZ8PjqYiD67GaE0Uw6VO_IBy6NI5uPgLdnVZjd1k5zfJvUPL1lU-qoepnmI-qNJs_pZ36sRWCI-SQQYsc8PPL44amWp985B4L_I6vTnVcYzCmTLTCjAq9_axY2vGrNiY-h6MqlbFNDY40LFUKRDkT7dZyI5p3K7ebdOFYH7gGpUBxH-24pqUezLAjKapa"
+      name: "Accounts Portal",
+      title: "Approved Accounts Account",
+      avatar: ""
     },
     Admin: {
-      name: "Admin Sarah",
-      title: "Super Superintendent",
-      avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuBnBBPu43qVgHVWCwgyQeFWB4DPivltD1GWou5HMkiWS5KCXBNihnGJHaKGiEfiDtJ8qTYOHdDTyO30vhL6unFDcJRYRXBt_3FPdgFZWQvGhq9lRA3wsnN-66d-kefGuTsZJ2qQJxISUFvBNx2vmRbmuwjeaSSaQuUhoEjd5r8FVnrkm1a2NYKoEpEZXrOrlD9B1T1plA73f7Xrn-7-HoqyFp93dzkIDqkkpIgQE9_kN71ajy97GxqjpybCrKHVJ0Awn2z0gOZu3nSz"
+      name: "Admin Portal",
+      title: "System Administrator",
+      avatar: ""
     }
   };
 
@@ -148,11 +148,9 @@ export default function PortalShell({
         {/* Sidebar Footer */}
         <div className="p-4 border-t border-[#1E293B] space-y-1 bg-[#070D18]">
           <div className="px-4 py-2 flex items-center gap-3">
-            <img 
-              src={currUser.avatar} 
-              alt={currUser.name}
-              className="w-10 h-10 rounded-full border border-slate-700/60 object-cover" 
-            />
+            <div className="w-10 h-10 rounded-full border border-slate-700/60 bg-slate-800 text-emerald-300 flex items-center justify-center text-xs font-bold">
+              {role.slice(0, 2).toUpperCase()}
+            </div>
             <div className="min-w-0">
               <h5 className="text-xs font-bold text-white truncate">{currUser.name}</h5>
               <p className="text-[10px] text-slate-400 truncate">{currUser.title}</p>
@@ -243,11 +241,9 @@ export default function PortalShell({
 
             <div className="p-4 border-t border-[#1E293B] bg-[#070D18] space-y-1">
               <div className="px-4 py-2 flex items-center gap-3">
-                <img 
-                  src={currUser.avatar} 
-                  alt={currUser.name}
-                  className="w-10 h-10 rounded-full border border-slate-700/60 object-cover" 
-                />
+                <div className="w-10 h-10 rounded-full border border-slate-700/60 bg-slate-800 text-emerald-300 flex items-center justify-center text-xs font-bold">
+                  {role.slice(0, 2).toUpperCase()}
+                </div>
                 <div>
                   <h5 className="text-xs font-bold text-white truncate">{currUser.name}</h5>
                   <p className="text-[10px] text-slate-400 truncate">{currUser.title}</p>

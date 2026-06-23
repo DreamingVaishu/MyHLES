@@ -39,6 +39,7 @@ export interface Student {
   section: string;
   guardianName: string;
   guardianPhone: string;
+  gardenNumber: string;
   studentId: string; // Activated upon teacher approval
   status: 'pending' | 'approved';
   academicGrades: SubjectGrade[];

@@ -54,10 +54,10 @@ function AppContent() {
     let actorName = 'Superintendent Admin';
     let actorRole: Role = 'Admin';
     if (role === 'Teacher') {
-      actorName = 'Dr. Sarah Jenkins';
+      actorName = email || 'Teacher';
       actorRole = 'Teacher';
     } else if (role === 'Accounts') {
-      actorName = 'A. Shankaran (Bursar)';
+      actorName = email || 'Accounts';
       actorRole = 'Accounts';
     }
 
@@ -88,7 +88,7 @@ function AppContent() {
     const loginLog: ActivityLog = {
       id: `LOG-${Date.now().toString().slice(-4)}`,
       timestamp: new Date().toISOString(),
-      actor: selectedRole === 'Admin' ? 'Admin Sarah' : selectedRole === 'Accounts' ? 'A. Shankaran' : 'Dr. Sarah Jenkins',
+      actor: userEmail,
       role: selectedRole,
       action: "Access Session Synchronized",
       target: "Academic Portal Link Active",
@@ -111,10 +111,32 @@ function AppContent() {
   };
 
   const handleApproveRequest = (id: string) => {
+    const original = requests.find(r => r.id === id);
+
     setRequests(prev => prev.map(r => r.id === id ? { ...r, status: 'Approved' } : r));
     
-    // Find the original request details
-    const original = requests.find(r => r.id === id);
+    if (original?.role === 'Parent' && original.linkedStudentName && !original.linkedStudentId) {
+      const newStudent: Student = {
+        id: `STU-${Date.now().toString().slice(-6)}`,
+        name: original.linkedStudentName,
+        grade: original.gradeRequested || currentGrade,
+        division: original.divisionRequested || currentDiv,
+        guardianName: original.name,
+        guardianContact: original.email,
+        guardianEmail: original.email.includes('@') ? original.email : '',
+        gardenNumber: original.gardenNumber,
+        feeStatus: 'Pending',
+        outstandingBalance: 0,
+        totalAnnualFee: 0,
+        attendanceHistory: [],
+        grades: []
+      };
+
+      setStudents(prev => [newStudent, ...prev]);
+      handleAddNewActivityLog("Approved Student Access", `${newStudent.name} added to Grade ${newStudent.grade}-${newStudent.division}`);
+      return;
+    }
+
     if (original && original.linkedStudentId) {
       // Find the student linked to check balance status check
       const studentMatch = students.find(s => s.id === original.linkedStudentId);
@@ -156,7 +178,7 @@ function AppContent() {
       title: "GLOBAL SYSTEM ANNOUNCEMENT",
       message: msg,
       date: new Date().toISOString().split('T')[0],
-      sentBy: role === 'Admin' ? 'Superintendent Office' : 'Dr. Sarah Jenkins',
+      sentBy: role === 'Admin' ? 'Superintendent Office' : email,
       senderRole: role || 'Admin',
       audienceType: 'All'
     };
@@ -166,7 +188,14 @@ function AppContent() {
 
   return (
     <Routes>
-      <Route path="/parent" element={<ParentMobileApp />} />
+      <Route path="/parent" element={
+        <ParentMobileApp
+          onAddAccessRequest={(req) => {
+            setRequests(prev => [req, ...prev]);
+            handleAddNewActivityLog("Created Student Approval Request", `${req.linkedStudentName} for Grade ${req.gradeRequested}-${req.divisionRequested}`);
+          }}
+        />
+      } />
       
       <Route path="/teacher/login" element={
         role === null ? (
@@ -176,6 +205,7 @@ function AppContent() {
               setRequests(prev => [req, ...prev]);
               handleAddNewActivityLog("Created Signup Application", req.name);
             }}
+            accessRequests={requests}
             autoSelectRole="Teacher"
           />
         ) : <Navigate to="/teacher" replace />
@@ -189,6 +219,7 @@ function AppContent() {
               setRequests(prev => [req, ...prev]);
               handleAddNewActivityLog("Created Signup Application", req.name);
             }}
+            accessRequests={requests}
             autoSelectRole="Accounts"
           />
         ) : <Navigate to="/accounts" replace />
@@ -202,6 +233,7 @@ function AppContent() {
               setRequests(prev => [req, ...prev]);
               handleAddNewActivityLog("Created Signup Application", req.name);
             }}
+            accessRequests={requests}
             autoSelectRole="Admin"
           />
         ) : <Navigate to="/admin" replace />

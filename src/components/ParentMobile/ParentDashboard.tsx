@@ -155,10 +155,8 @@ export default function ParentDashboard({
               <p>3. Once approved, report cards, fees trackers, and daily attendance load instantly here.</p>
             </div>
 
-            <div className="pt-2">
-              <div className="text-xs text-indigo-700 font-semibold bg-indigo-50 border border-indigo-100 rounded-lg p-2 flex items-center justify-center gap-1">
-                <span>💡 Developer tip: Switch to "Teacher Mode" above to instantly approve this kid!</span>
-              </div>
+            <div className="pt-2 text-xs text-indigo-700 font-semibold bg-indigo-50 border border-indigo-100 rounded-lg p-2">
+              Waiting for the class teacher to approve this student access request.
             </div>
           </div>
         </div>
@@ -421,7 +419,7 @@ export default function ParentDashboard({
                   </div>
                   <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
                     <p className="text-[10px] text-[#75777d] font-bold uppercase">Linked Email</p>
-                    <p className="text-xs font-bold text-[#091426] mt-0.5 truncate">mahimamourya2005@gmail.com</p>
+                    <p className="text-xs font-bold text-[#091426] mt-0.5 truncate">{selectedStudent.guardianPhone}</p>
                   </div>
                 </div>
               </div>

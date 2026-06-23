@@ -54,7 +54,7 @@ export default function AdminPortal({
   const [adminLookupQuery, setAdminLookupQuery] = useState('');
   
   // Tab states for approvals sub-view
-  const [approvalsTab, setApprovalsTab] = useState<'Teacher' | 'Parent'>('Teacher');
+  const [approvalsTab, setApprovalsTab] = useState<'Teacher' | 'Accounts' | 'Parent'>('Teacher');
   
   // New user directory form states
   const [newFacultyName, setNewFacultyName] = useState('');
@@ -100,8 +100,8 @@ export default function AdminPortal({
 
   const handleApproveRequestWithLog = (req: AccessRequest) => {
     onApproveRequest(req.id);
-    onAddLog("Approved Parent Account Verification", `Linked parent ${req.name} to student ${req.linkedStudentName}`);
-    alert(`Verified and Approved parent link for ${req.linkedStudentName}. Notification dispatched.`);
+    onAddLog("Approved Portal Access Request", `${req.role} request approved for ${req.name}`);
+    alert(`Approved ${req.role} request for ${req.name}.`);
   };
 
   const handleRejectRequestWithLog = (e: React.FormEvent) => {

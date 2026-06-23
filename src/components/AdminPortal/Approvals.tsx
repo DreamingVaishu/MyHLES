@@ -4,8 +4,8 @@ import { AccessRequest } from '../../types';
 
 interface ApprovalsProps {
   requests: AccessRequest[];
-  approvalsTab: 'Teacher' | 'Parent';
-  onApprovalsTabChange: (tab: 'Teacher' | 'Parent') => void;
+  approvalsTab: 'Teacher' | 'Accounts' | 'Parent';
+  onApprovalsTabChange: (tab: 'Teacher' | 'Accounts' | 'Parent') => void;
   onApproveRequest: (req: AccessRequest) => void;
   onReviewRequest: (req: AccessRequest) => void;
 }
@@ -13,6 +13,7 @@ interface ApprovalsProps {
 export default function Approvals({ requests, approvalsTab, onApprovalsTabChange, onApproveRequest, onReviewRequest }: ApprovalsProps) {
   const filteredRequests = requests.filter(r => {
     if (approvalsTab === 'Teacher') return r.role === 'Teacher';
+    if (approvalsTab === 'Accounts') return r.role === 'Accounts';
     return r.role === 'Parent' || r.role === 'Student';
   });
 
@@ -27,7 +28,7 @@ export default function Approvals({ requests, approvalsTab, onApprovalsTabChange
         </div>
 
         <div className="flex bg-slate-100 p-1 rounded-lg border text-xs font-bold">
-          {(['Teacher', 'Parent'] as const).map(tab => (
+          {(['Teacher', 'Accounts', 'Parent'] as const).map(tab => (
             <button
               key={tab}
               onClick={() => onApprovalsTabChange(tab)}
@@ -35,7 +36,7 @@ export default function Approvals({ requests, approvalsTab, onApprovalsTabChange
                 approvalsTab === tab ? 'bg-slate-900 text-white' : 'text-slate-650 hover:bg-slate-200/50'
               }`}
             >
-              {tab === 'Teacher' ? 'Faculty Signups' : 'Parent Linkings'}
+              {tab === 'Teacher' ? 'Faculty Signups' : tab === 'Accounts' ? 'Accounts Signups' : 'Parent Linkings'}
             </button>
           ))}
         </div>

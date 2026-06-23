@@ -11,17 +11,18 @@ interface NewChildInput {
   name: string;
   grade: string;
   section: string;
+  gardenNumber: string;
 }
 
 export default function ParentOnboarding({ onOnboardingComplete, guardianName }: ParentOnboardingProps) {
   const [children, setChildren] = useState<NewChildInput[]>([
-    { name: '', grade: 'Grade 5', section: 'A' }
+    { name: '', grade: 'Grade 5', section: 'A', gardenNumber: '' }
   ]);
   const [errors, setErrors] = useState<string[]>([]);
   const [isDone, setIsDone] = useState(false);
 
   const addChildField = () => {
-    setChildren([...children, { name: '', grade: 'Grade 6', section: 'A' }]);
+    setChildren([...children, { name: '', grade: 'Grade 6', section: 'A', gardenNumber: '' }]);
     setErrors([]);
   };
 
@@ -47,6 +48,9 @@ export default function ParentOnboarding({ onOnboardingComplete, guardianName }:
       }
       if (!child.section.trim()) {
         newErrors.push(`Child ${idx + 1} requires a section.`);
+      }
+      if (!child.gardenNumber.trim()) {
+        newErrors.push(`Child ${idx + 1} requires a garden number.`);
       }
     });
 
@@ -116,7 +120,7 @@ export default function ParentOnboarding({ onOnboardingComplete, guardianName }:
                   {/* Full Name input */}
                   <div className="md:col-span-6 flex flex-col gap-1">
                     <label className="block text-xs font-bold text-[#45474c]">
-                      Full Name
+                      Student Name
                     </label>
                     <input
                       type="text"
@@ -130,7 +134,7 @@ export default function ParentOnboarding({ onOnboardingComplete, guardianName }:
                   {/* Grade pick */}
                   <div className="md:col-span-3 flex flex-col gap-1">
                     <label className="block text-xs font-bold text-[#45474c]">
-                      Grade
+                      Standard
                     </label>
                     <select
                       value={child.grade}
@@ -146,7 +150,7 @@ export default function ParentOnboarding({ onOnboardingComplete, guardianName }:
                   {/* Section input */}
                   <div className="md:col-span-3 flex flex-col gap-1">
                     <label className="block text-xs font-bold text-[#45474c]">
-                      Section
+                      Division
                     </label>
                     <input
                       type="text"
@@ -157,6 +161,19 @@ export default function ParentOnboarding({ onOnboardingComplete, guardianName }:
                       className="w-full px-4 py-2.5 rounded-xl border border-[#c5c6cd] bg-[#f8f9ff] focus:border-[#091426] focus:ring-1 focus:ring-[#091426] transition-all text-sm h-11"
                     />
                   </div>
+                </div>
+
+                <div className="mt-4 flex flex-col gap-1">
+                  <label className="block text-xs font-bold text-[#45474c]">
+                    Garden Number
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Enter garden number"
+                    value={child.gardenNumber}
+                    onChange={(e) => handleFieldChange(index, 'gardenNumber', e.target.value.toUpperCase())}
+                    className="w-full px-4 py-2.5 rounded-xl border border-[#c5c6cd] bg-[#f8f9ff] focus:border-[#091426] focus:ring-1 focus:ring-[#091426] transition-all text-sm h-11"
+                  />
                 </div>
 
                 <div className="mt-4 flex items-center gap-2 text-[#326852] bg-[#b3ecd0]/20 px-3 py-2 rounded-xl text-xs font-medium w-fit">

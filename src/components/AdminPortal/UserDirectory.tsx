@@ -24,12 +24,7 @@ export default function UserDirectory({
   onRevokeUser,
   onAddLog
 }: UserDirectoryProps) {
-  const users = [
-    { name: "Dr. Sarah Jenkins", dept: "Mathematics HOD", role: "Teacher", id: "1" },
-    { name: "A. Shankaran", dept: "Chief Bursar Office", role: "Accounts", id: "2" },
-    { name: "Admin Sarah", dept: "Super Superintendent", role: "Admin", id: "3" },
-    { name: "Prof. Devendra Roy", dept: "Physics Dept", role: "Teacher", id: "4" }
-  ];
+  const users: { name: string; dept: string; role: 'Teacher' | 'Accounts' | 'Admin'; id: string }[] = [];
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-12 gap-6 animate-in">
@@ -39,7 +34,7 @@ export default function UserDirectory({
         <div>
           <div className="p-6 border-b bg-slate-50/50 flex justify-between items-center">
             <h3 className="font-bold text-slate-800 text-base">Active Credentials Register</h3>
-            <span className="text-xs bg-slate-200 px-2 py-0.5 rounded font-bold">4 Active Authorities</span>
+            <span className="text-xs bg-slate-200 px-2 py-0.5 rounded font-bold">{users.length} Active Authorities</span>
           </div>
 
           <div className="overflow-x-auto text-xs font-semibold">

@@ -8,6 +8,7 @@ export interface Student {
   guardianName: string;
   guardianContact: string;
   guardianEmail: string;
+  gardenNumber?: string;
   feeStatus: 'Paid' | 'Pending' | 'Overdue';
   outstandingBalance: number;
   totalAnnualFee: number;
@@ -27,10 +28,13 @@ export interface AccessRequest {
   id: string;
   name: string;
   email: string;
-  role: 'Parent' | 'Student' | 'Teacher';
+  role: 'Parent' | 'Student' | 'Teacher' | 'Accounts';
+  employeeId?: string;
+  requestedPassword?: string;
   specializationDept?: string; // for teachers
   linkedStudentId?: string; // for parents
   linkedStudentName?: string; // for parents
+  gardenNumber?: string;
   gradeRequested?: string; // "10"
   divisionRequested?: string; // "A"
   gradesRequested?: string[]; // Multiple grades for Teacher portal request

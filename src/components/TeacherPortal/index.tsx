@@ -66,7 +66,7 @@ export default function TeacherPortal({
       title: `Notice for Grade ${currentGrade} - Div ${currentDiv}`,
       message: message,
       date: new Date().toISOString().split('T')[0],
-      sentBy: "Dr. Sarah Jenkins",
+      sentBy: "Teacher",
       senderRole: "Teacher",
       audienceType: "Class",
       targetGrade: currentGrade,

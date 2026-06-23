@@ -5,10 +5,14 @@ import { Role, AccessRequest } from '../../types';
 interface LoginScreenProps {
   onLogin: (role: Role, email: string) => void;
   onAddAccessRequest: (request: AccessRequest) => void;
+  accessRequests?: AccessRequest[];
   autoSelectRole?: Role;
 }
 
-export default function LoginScreen({ onLogin, onAddAccessRequest, autoSelectRole = 'Teacher' }: LoginScreenProps) {
+const ADMIN_USER_ID = 'myhles-admin';
+const ADMIN_PASSWORD = 'Admin@12345';
+
+export default function LoginScreen({ onLogin, onAddAccessRequest, accessRequests = [], autoSelectRole = 'Teacher' }: LoginScreenProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -27,15 +31,25 @@ export default function LoginScreen({ onLogin, onAddAccessRequest, autoSelectRol
     e.preventDefault();
     if (!email) return;
 
-    // Detect role from email or use current autoSelectRole
     let role: Role = autoSelectRole;
-    const lowerEmail = email.toLowerCase();
-    if (lowerEmail.includes('admin')) {
-      role = 'Admin';
-    } else if (lowerEmail.includes('account') || lowerEmail.includes('finance')) {
-      role = 'Accounts';
-    } else if (lowerEmail.includes('teacher') || lowerEmail.includes('jenk') || lowerEmail.includes('sarah')) {
-      role = 'Teacher';
+
+    if (autoSelectRole === 'Admin') {
+      if (email !== ADMIN_USER_ID || password !== ADMIN_PASSWORD) {
+        alert('Invalid admin user ID or password.');
+        return;
+      }
+      onLogin('Admin', email);
+      return;
+    }
+
+    const approvedRequest = accessRequests.find(req => {
+      const sameEmail = req.email.toLowerCase() === email.toLowerCase();
+      return sameEmail && req.role === role && req.status === 'Approved';
+    });
+
+    if (!approvedRequest) {
+      alert(`${role} access is waiting for admin approval or the credentials do not match an approved account.`);
+      return;
     }
     
     onLogin(role, email);
@@ -43,14 +57,14 @@ export default function LoginScreen({ onLogin, onAddAccessRequest, autoSelectRol
 
   const handlePrefill = (role: Role) => {
     if (role === 'Teacher') {
-      setEmail('sarah.jenkins@myhles.edu.in');
-      setPassword('••••••••');
+      setEmail('');
+      setPassword('');
     } else if (role === 'Accounts') {
-      setEmail('finance.officer@myhles.edu.in');
-      setPassword('••••••••');
+      setEmail('');
+      setPassword('');
     } else {
-      setEmail('admin.control@myhles.edu.in');
-      setPassword('••••••••');
+      setEmail(ADMIN_USER_ID);
+      setPassword(ADMIN_PASSWORD);
     }
   };
 
@@ -72,11 +86,11 @@ export default function LoginScreen({ onLogin, onAddAccessRequest, autoSelectRol
 
   const handleRequestSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!fullName || !employeeId || !requestEmail) {
+    if (!fullName || !employeeId || !requestEmail || !password) {
       alert("Please fill all personal details.");
       return;
     }
-    if (selectedGrades.length === 0 || selectedDivisions.length === 0) {
+    if (autoSelectRole === 'Teacher' && (selectedGrades.length === 0 || selectedDivisions.length === 0)) {
       alert("Please select at least one Standard and Division.");
       return;
     }
@@ -85,10 +99,12 @@ export default function LoginScreen({ onLogin, onAddAccessRequest, autoSelectRol
       id: `REQ-${Date.now().toString().slice(-4)}`,
       name: fullName,
       email: requestEmail,
-      role: 'Teacher',
-      specializationDept: `Faculty Level Request (ID: ${employeeId})`,
-      gradesRequested: selectedGrades,
-      divisionsRequested: selectedDivisions,
+      role: autoSelectRole === 'Accounts' ? 'Accounts' : 'Teacher',
+      employeeId,
+      requestedPassword: password,
+      specializationDept: autoSelectRole === 'Accounts' ? `Accounts Office Request (ID: ${employeeId})` : `Faculty Level Request (ID: ${employeeId})`,
+      gradesRequested: autoSelectRole === 'Teacher' ? selectedGrades : [],
+      divisionsRequested: autoSelectRole === 'Teacher' ? selectedDivisions : [],
       requestDate: new Date().toISOString().split('T')[0],
       status: 'Pending'
     };
@@ -176,7 +192,7 @@ export default function LoginScreen({ onLogin, onAddAccessRequest, autoSelectRol
                         type="text" 
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
-                        placeholder="Dr. Sarah Jenkins"
+                        placeholder={autoSelectRole === 'Accounts' ? 'Accounts Staff Name' : 'Teacher Name'}
                         className="w-full border border-slate-300 rounded px-3 py-2 text-sm text-slate-800 focus:outline-[#0B1220]" 
                         required
                       />
@@ -205,9 +221,21 @@ export default function LoginScreen({ onLogin, onAddAccessRequest, autoSelectRol
                       required
                     />
                   </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">Password</label>
+                    <input 
+                      type="password" 
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Create a password for this portal"
+                      className="w-full border border-slate-300 rounded px-3 py-2 text-sm text-slate-800 focus:outline-[#0B1220]" 
+                      required
+                    />
+                  </div>
                 </div>
 
-                <div className="space-y-4 pt-2">
+                {autoSelectRole === 'Teacher' && <div className="space-y-4 pt-2">
                   <h4 className="text-xs uppercase text-slate-400 tracking-wider font-bold border-b pb-2">Access Scope</h4>
                   
                   <div>
@@ -257,7 +285,7 @@ export default function LoginScreen({ onLogin, onAddAccessRequest, autoSelectRol
                       })}
                     </div>
                   </div>
-                </div>
+                </div>}
 
                 <div className="flex gap-4 pt-6 border-t font-semibold">
                   <button 
@@ -426,3 +454,4 @@ export default function LoginScreen({ onLogin, onAddAccessRequest, autoSelectRol
     </div>
   );
 }
+

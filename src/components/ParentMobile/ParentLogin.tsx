@@ -31,10 +31,12 @@ export default function ParentLogin({ onLoginSuccess, onSwitchToTeacher }: Paren
   };
 
   const handleGoogleSubmit = () => {
+    const email = window.prompt('Enter the Google email used for this parent account');
+    if (!email) return;
     setIsSubmitting(true);
     setTimeout(() => {
       setIsSubmitting(false);
-      onLoginSuccess('mahimamourya2005@gmail.com', 'google');
+      onLoginSuccess(email, 'google');
     }, 800);
   };
 
