@@ -1,0 +1,6 @@
+{
+  "name": "MyHLES Portal",
+  "description": "Role-based school management dashboard with distinct interfaces for Teachers, Accounts department, and Administrators.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

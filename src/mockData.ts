@@ -1,121 +1,385 @@
-import { Student, Notice } from './types';
+import { Student, AccessRequest, Notice, Transaction, FeeStructureItem, ActivityLog, SchoolConfig } from './types';
 
-export const INITIAL_NOTICES: Notice[] = [
-  {
-    id: 'n1',
-    title: 'Annual Sports Meet',
-    date: 'Oct 20',
-    content: 'Join us for a day of athletic excellence and school spirit. Registration forms are due by Friday. Sports uniforms are mandatory for all participants.',
-    category: 'Event'
-  },
-  {
-    id: 'n2',
-    title: 'Parent-Teacher Meeting',
-    date: 'Oct 25',
-    content: 'Individual academic progress reviews for Term 1 will take place in the main auditorium. Please reserve your specific time slot using the online portal.',
-    category: 'Urgent'
-  },
-  {
-    id: 'n3',
-    title: 'Winter Uniform Update',
-    date: 'Oct 18',
-    content: 'Transition to winter uniforms begins next Monday. Blazers and woollen trousers can be gathered from the campus store from 9:00 AM onwards.',
-    category: 'General'
-  }
-];
+export const INITIAL_SCHOOL: SchoolConfig = {
+  name: "MyHLES Academy",
+  address: "St. Xavier's Campus, Road 4, Sector 15, Mumbai, Maharashtra 400001",
+  establishedYear: "2012"
+};
 
 export const INITIAL_STUDENTS: Student[] = [
   {
-    id: 's1',
-    name: 'Alex Thompson',
-    grade: 'Grade 5',
-    section: 'A',
-    guardianName: 'Michael Thompson',
-    guardianPhone: '+10000000000',
-    studentId: 'STD-2026-618',
-    status: 'approved',
-    academicGrades: [
-      { subject: 'Science', grade: 'A+', marks: 96, icon: 'beaker' },
-      { subject: 'History', grade: 'B+', marks: 87, icon: 'book-open' },
-      { subject: 'Mathematics', grade: 'A', marks: 92, icon: 'plus-minus' },
-      { subject: 'English', grade: 'A-', marks: 90, icon: 'languages' }
-    ],
-    attendance: {
-      present: 42,
-      total: 45,
-      percentage: 93.3
-    },
-    upcomingExams: [
-      { id: 'e1', date: '12', month: 'OCT', subject: 'Mathematics', details: 'Term 2 Finals • 09:00 AM' },
-      { id: 'e2', date: '15', month: 'OCT', subject: 'English Literature', details: 'Project Submission' }
-    ],
+    id: "STU-2026-001",
+    name: "Alex Thompson",
+    grade: "10",
+    division: "A",
+    guardianName: "Michael Thompson",
+    guardianContact: "+91 98765 43210",
+    guardianEmail: "m.thompson@gmail.com",
+    feeStatus: "Pending",
     outstandingBalance: 1250,
-    annualTotal: 3650,
-    feeItems: [
-      { id: 'f1', name: 'Tuition (Term 2)', amount: 3200, dueDate: '15 Sep 2026', status: 'Paid', category: 'tuition' },
-      { id: 'f2', name: 'Transport (Oct)', amount: 150, dueDate: '05 Oct 2026', status: 'Overdue', category: 'transport' },
-      { id: 'f3', name: 'Lab Fees', amount: 300, dueDate: '15 Oct 2026', status: 'Pending', category: 'lab' },
-      { id: 'f4', name: 'Activity Fee', amount: 800, dueDate: '30 Oct 2026', status: 'Pending', category: 'activity' }
+    totalAnnualFee: 36500,
+    attendanceHistory: [
+      { date: "2026-06-18", status: "Present" },
+      { date: "2026-06-19", status: "Present" },
+      { date: "2026-06-20", status: "Late" }
     ],
-    transactions: [
-      { id: 't1', date: '24', month: 'Aug', day: '24', description: 'Tuition (Term 1)', amount: 3200, status: 'Paid' },
-      { id: 't2', date: '02', month: 'Aug', day: '02', description: 'Activity Fee', amount: 450, status: 'Paid' }
+    grades: [
+      { subject: "Mathematics", marksSecured: 88, maxMarks: 100, grade: "A" },
+      { subject: "Science", marksSecured: 95, maxMarks: 100, grade: "A+" },
+      { subject: "English", marksSecured: 82, maxMarks: 100, grade: "A-" },
+      { subject: "History", marksSecured: 78, maxMarks: 100, grade: "B+" }
     ]
   },
   {
-    id: 's2',
-    name: 'Sarah Thompson',
-    grade: 'Grade 3',
-    section: 'B',
-    guardianName: 'Michael Thompson',
-    guardianPhone: '+10000000000',
-    studentId: 'STD-2026-921',
-    status: 'approved',
-    academicGrades: [
-      { subject: 'Science', grade: 'A', marks: 93, icon: 'beaker' },
-      { subject: 'History', grade: 'A', marks: 94, icon: 'book-open' },
-      { subject: 'Mathematics', grade: 'A+', marks: 98, icon: 'plus-minus' },
-      { subject: 'English', grade: 'B+', marks: 88, icon: 'languages' }
+    id: "STU-2026-002",
+    name: "Sarah Miller",
+    grade: "10",
+    division: "B",
+    guardianName: "David Miller",
+    guardianContact: "+91 87654 32109",
+    guardianEmail: "d.miller@outlook.com",
+    feeStatus: "Paid",
+    outstandingBalance: 0,
+    totalAnnualFee: 36500,
+    attendanceHistory: [
+      { date: "2026-06-18", status: "Present" },
+      { date: "2026-06-19", status: "Present" },
+      { date: "2026-06-20", status: "Present" }
     ],
-    attendance: {
-      present: 44,
-      total: 45,
-      percentage: 97.7
-    },
-    upcomingExams: [
-      { id: 'e3', date: '13', month: 'OCT', subject: 'Science Practical', details: 'Chemistry Lab • 10:30 AM' },
-      { id: 'e4', date: '22', month: 'OCT', subject: 'History Quiz', details: 'Ancient Civilizations' }
+    grades: [
+      { subject: "Mathematics", marksSecured: 92, maxMarks: 100, grade: "A+" },
+      { subject: "Science", marksSecured: 90, maxMarks: 100, grade: "A" },
+      { subject: "English", marksSecured: 88, maxMarks: 100, grade: "A" },
+      { subject: "History", marksSecured: 85, maxMarks: 100, grade: "A-" }
+    ]
+  },
+  {
+    id: "STU-2026-003",
+    name: "Jordan Davis",
+    grade: "11",
+    division: "A",
+    guardianName: "Thomas Davis",
+    guardianContact: "+91 76543 21098",
+    guardianEmail: "t.davis@yahoo.com",
+    feeStatus: "Overdue",
+    outstandingBalance: 12400,
+    totalAnnualFee: 42000,
+    attendanceHistory: [
+      { date: "2026-06-18", status: "Late" },
+      { date: "2026-06-19", status: "Absent" },
+      { date: "2026-06-20", status: "Present" }
     ],
-    outstandingBalance: 400,
-    annualTotal: 3650,
-    feeItems: [
-      { id: 'f5', name: 'Tuition (Term 2)', amount: 3200, dueDate: '15 Sep 2026', status: 'Paid', category: 'tuition' },
-      { id: 'f6', name: 'Library Fee', amount: 200, dueDate: '10 Oct 2026', status: 'Overdue', category: 'library' },
-      { id: 'f7', name: 'Computer Lab Access', amount: 200, dueDate: '20 Oct 2026', status: 'Pending', category: 'lab' }
+    grades: [
+      { subject: "Mathematics", marksSecured: 65, maxMarks: 100, grade: "C" },
+      { subject: "Physics", marksSecured: 71, maxMarks: 100, grade: "B" },
+      { subject: "Chemistry", marksSecured: 68, maxMarks: 100, grade: "B-" },
+      { subject: "English", marksSecured: 84, maxMarks: 100, grade: "A-" }
+    ]
+  },
+  {
+    id: "STU-2026-004",
+    name: "Maya Thompson",
+    grade: "9",
+    division: "A",
+    guardianName: "David Thompson",
+    guardianContact: "+91 65432 10987",
+    guardianEmail: "d.thompson@work.com",
+    feeStatus: "Paid",
+    outstandingBalance: 0,
+    totalAnnualFee: 32000,
+    attendanceHistory: [
+      { date: "2026-06-18", status: "Present" },
+      { date: "2026-06-19", status: "Present" },
+      { date: "2026-06-20", status: "Present" }
     ],
-    transactions: [
-      { id: 't3', date: '25', month: 'Aug', day: '25', description: 'Tuition (Term 1)', amount: 3200, status: 'Paid' },
-      { id: 't4', date: '10', month: 'Aug', day: '10', description: 'Sports Kit Fee', amount: 450, status: 'Paid' }
+    grades: [
+      { subject: "Mathematics", marksSecured: 94, maxMarks: 100, grade: "A+" },
+      { subject: "Science", marksSecured: 91, maxMarks: 100, grade: "A" },
+      { subject: "English", marksSecured: 89, maxMarks: 100, grade: "A" },
+      { subject: "Social Science", marksSecured: 93, maxMarks: 100, grade: "A+" }
+    ]
+  },
+  {
+    id: "STU-2026-005",
+    name: "Leon Richards",
+    grade: "12",
+    division: "A",
+    guardianName: "Richard Miller",
+    guardianContact: "+91 95432 12903",
+    guardianEmail: "r.miller@corporate.com",
+    feeStatus: "Paid",
+    outstandingBalance: 0,
+    totalAnnualFee: 45000,
+    attendanceHistory: [
+      { date: "2026-06-18", status: "Present" },
+      { date: "2026-06-19", status: "Present" },
+      { date: "2026-06-20", status: "Present" }
+    ],
+    grades: [
+      { subject: "Mathematics", marksSecured: 99, maxMarks: 100, grade: "A+" },
+      { subject: "Physics", marksSecured: 96, maxMarks: 100, grade: "A+" },
+      { subject: "Chemistry", marksSecured: 98, maxMarks: 100, grade: "A+" },
+      { subject: "English", marksSecured: 92, maxMarks: 100, grade: "A+" }
+    ]
+  },
+  {
+    id: "STU-2026-006",
+    name: "Sophia Chen",
+    grade: "10",
+    division: "A",
+    guardianName: "David Chen",
+    guardianContact: "+91 99342 34567",
+    guardianEmail: "david.chen@agency.com",
+    feeStatus: "Paid",
+    outstandingBalance: 0,
+    totalAnnualFee: 36500,
+    attendanceHistory: [
+      { date: "2026-06-18", status: "Present" },
+      { date: "2026-06-19", status: "Present" },
+      { date: "2026-06-20", status: "Present" }
+    ],
+    grades: [
+      { subject: "Mathematics", marksSecured: 91, maxMarks: 100, grade: "A" },
+      { subject: "Science", marksSecured: 92, maxMarks: 100, grade: "A" },
+      { subject: "English", marksSecured: 94, maxMarks: 100, grade: "A+" },
+      { subject: "History", marksSecured: 89, maxMarks: 100, grade: "A-" }
+    ]
+  },
+  {
+    id: "STU-2026-007",
+    name: "Elena Martinez",
+    grade: "11",
+    division: "A",
+    guardianName: "Jorge Martinez",
+    guardianContact: "+91 91234 56789",
+    guardianEmail: "j.martinez@mumbai.in",
+    feeStatus: "Pending",
+    outstandingBalance: 3200,
+    totalAnnualFee: 42000,
+    attendanceHistory: [
+      { date: "2026-06-18", status: "Present" },
+      { date: "2026-06-19", status: "Late" },
+      { date: "2026-06-20", status: "Present" }
+    ],
+    grades: [
+      { subject: "Mathematics", marksSecured: 85, maxMarks: 100, grade: "A-" },
+      { subject: "Physics", marksSecured: 89, maxMarks: 100, grade: "A-" },
+      { subject: "Chemistry", marksSecured: 91, maxMarks: 100, grade: "A" },
+      { subject: "English", marksSecured: 87, maxMarks: 100, grade: "B+" }
     ]
   }
 ];
 
-export const MOCK_SUBJECTS_POOL = [
-  { subject: 'Mathematics', baseMark: 85, icon: 'plus-minus' },
-  { subject: 'Science', baseMark: 82, icon: 'beaker' },
-  { subject: 'History', baseMark: 78, icon: 'book-open' },
-  { subject: 'English', baseMark: 80, icon: 'languages' },
-  { subject: 'Geography', baseMark: 84, icon: 'globe' },
-  { subject: 'Arts & Design', baseMark: 90, icon: 'palette' }
+export const INITIAL_REQUESTS: AccessRequest[] = [
+  {
+    id: "REQ-2026-001",
+    name: "Alexander Mitchell",
+    email: "a.mitchell@gmail.com",
+    role: "Parent",
+    linkedStudentId: "STU-2026-003",
+    linkedStudentName: "Jordan Davis",
+    gradeRequested: "11",
+    divisionRequested: "A",
+    requestDate: "2026-06-20",
+    status: "Pending"
+  },
+  {
+    id: "REQ-2026-002",
+    name: "Sophia Chen",
+    email: "s.chen.parent@gmail.com",
+    role: "Parent",
+    linkedStudentId: "STU-2026-006",
+    linkedStudentName: "Sophia Chen",
+    gradeRequested: "10",
+    divisionRequested: "A",
+    requestDate: "2026-06-20",
+    status: "Pending"
+  },
+  {
+    id: "REQ-2026-003",
+    name: "Robert J. Harris",
+    email: "robert.harris@mumbai.net",
+    role: "Parent",
+    linkedStudentId: "STU-2026-002",
+    linkedStudentName: "Sarah Miller",
+    gradeRequested: "10",
+    divisionRequested: "B",
+    requestDate: "2026-06-19",
+    status: "Pending"
+  },
+  {
+    id: "REQ-2026-004",
+    name: "Dr. Rachel Green",
+    email: "rachel.g@academy.edu",
+    role: "Teacher",
+    specializationDept: "Chemistry & Life Sciences",
+    gradesRequested: ["10", "11", "12"],
+    divisionsRequested: ["A", "B", "C"],
+    requestDate: "2026-06-18",
+    status: "Pending"
+  }
 ];
 
-export const calculateGrade = (marks: number): string => {
-  if (marks >= 95) return 'A+';
-  if (marks >= 90) return 'A';
-  if (marks >= 85) return 'A-';
-  if (marks >= 80) return 'B+';
-  if (marks >= 75) return 'B';
-  if (marks >= 70) return 'B-';
-  if (marks >= 60) return 'C';
-  return 'D';
-};
+export const INITIAL_NOTICES: Notice[] = [
+  {
+    id: "NTC-001",
+    title: "Annual Sports Day Registration",
+    message: "Registration for the Annual Sports Day events is open. Please contact your physical education coordinators with your chosen track-and-field events by Friday evening.",
+    date: "2026-06-15",
+    sentBy: "Principal's Office",
+    senderRole: "Admin",
+    audienceType: "All"
+  },
+  {
+    id: "NTC-002",
+    title: "Term 1 Feedback Portal Open",
+    message: "Progress reports and qualitative feedback sheets for Term 1 have been released. Parents are requested to log into the mobile dashboard to sign off.",
+    date: "2026-06-14",
+    sentBy: "Administrative Office",
+    senderRole: "Admin",
+    audienceType: "All"
+  },
+  {
+    id: "NTC-003",
+    title: "Mathematics Revision Term 2",
+    message: "Grade 10 students must submit their complete math revision worksheets for Calculus Basics by Monday afternoon. Graded scores will contribute to internal assessments.",
+    date: "2026-06-18",
+    sentBy: "Dr. Sarah Jenkins",
+    senderRole: "Teacher",
+    audienceType: "Class",
+    targetGrade: "10",
+    targetDivision: "A"
+  }
+];
+
+export const INITIAL_TRANSACTIONS: Transaction[] = [
+  {
+    id: "TXN-2026-001",
+    studentId: "STU-2026-004",
+    studentName: "Maya Thompson",
+    grade: "9",
+    division: "A",
+    amount: 14500,
+    date: "2026-06-20",
+    method: "Cash",
+    notes: "Tuition Term 1 & Transport partial clearance",
+    receiptSent: true,
+    status: "Recorded",
+    timestamp: "15 minutes ago"
+  },
+  {
+    id: "TXN-2026-002",
+    studentId: "STU-2026-005",
+    studentName: "Leon Richards",
+    grade: "12",
+    division: "A",
+    amount: 22000,
+    date: "2026-06-20",
+    method: "Cheque",
+    notes: "Chq No: 882310, Clearing Bank: HDFC Bank",
+    receiptSent: true,
+    status: "Recorded",
+    timestamp: "2 hours ago"
+  },
+  {
+    id: "TXN-2026-003",
+    studentId: "STU-2026-006",
+    studentName: "Sophia Chen",
+    grade: "10",
+    division: "A",
+    amount: 18500,
+    date: "2026-06-20",
+    method: "Cash",
+    notes: "Received in Accounts office in full",
+    receiptSent: true,
+    status: "Recorded",
+    timestamp: "4 hours ago"
+  },
+  {
+    id: "TXN-2026-004",
+    studentId: "STU-2026-002",
+    studentName: "Sarah Miller",
+    grade: "10",
+    division: "B",
+    amount: 36500,
+    date: "2026-06-19",
+    method: "Transfer",
+    notes: "NEFT Transaction UTR: BARB2026061903",
+    receiptSent: true,
+    status: "Recorded",
+    timestamp: "1 day ago"
+  }
+];
+
+export const INITIAL_FEES: FeeStructureItem[] = [
+  {
+    id: "FEE-001",
+    grade: "10",
+    feeName: "Tuition Term 2",
+    amount: 3200,
+    dueDate: "2026-09-15"
+  },
+  {
+    id: "FEE-002",
+    grade: "10",
+    feeName: "Laboratory Levy",
+    amount: 750,
+    dueDate: "2026-07-20"
+  },
+  {
+    id: "FEE-003",
+    grade: "11",
+    feeName: "Tuition Term 2",
+    amount: 3500,
+    dueDate: "2026-09-15"
+  },
+  {
+    id: "FEE-004",
+    grade: "12",
+    feeName: "Tuition Term 2",
+    amount: 3800,
+    dueDate: "2026-09-15"
+  },
+  {
+    id: "FEE-005",
+    grade: "All",
+    feeName: "Operational Transport Levy",
+    amount: 1500,
+    dueDate: "2026-08-30"
+  }
+];
+
+export const INITIAL_LOGS: ActivityLog[] = [
+  {
+    id: "LOG-001",
+    timestamp: "2026-06-21T01:10:00-07:00",
+    actor: "Admin Sarah",
+    role: "Admin",
+    action: "Approved Access Request",
+    target: "Dr. Rachel Green (Teacher Access)"
+  },
+  {
+    id: "LOG-002",
+    timestamp: "2026-06-20T23:45:00-07:00",
+    actor: "Accounts Desk",
+    role: "Accounts",
+    action: "Recorded Cash Transaction",
+    target: "₹14,500 for student Maya Thompson"
+  },
+  {
+    id: "LOG-003",
+    timestamp: "2026-06-20T18:30:00-07:00",
+    actor: "Dr. Sarah Jenkins",
+    role: "Teacher",
+    action: "Updated Chemistry Internal Scores",
+    target: "Grade 10 - Division A"
+  },
+  {
+    id: "LOG-004",
+    timestamp: "2026-06-19T14:15:00-07:00",
+    actor: "Principal's Office",
+    role: "Admin",
+    action: "Broadcasted Portal Announcement",
+    target: "Annual Sports Day Notice"
+  }
+];

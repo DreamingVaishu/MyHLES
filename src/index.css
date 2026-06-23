@@ -1,1 +1,34 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-serif: "Playfair Display", Georgia, Cambria, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* Custom Webkit scrollbar hiding classes */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Skeleton animation keys */
+@keyframes skeleton-loading {
+  0% {
+    background-color: #f1f5f9;
+  }
+  50% {
+    background-color: #e2e8f0;
+  }
+  100% {
+    background-color: #f1f5f9;
+  }
+}
+
+.animate-skeleton {
+  animation: skeleton-loading 1.5s infinite ease-in-out;
+}
